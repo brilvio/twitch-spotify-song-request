@@ -9,8 +9,8 @@ export class Twitch {
   constructor(spotify: Spotify) {
     this.spotify = spotify;
     this.client = new tmi.Client({
-      identity: { username: 'brilvio', password: process.env.TWITCH_TOKEN },
-      channels: ['brilvio'],
+      identity: { username: process.env.TWITCH_USER, password: process.env.TWITCH_TOKEN },
+      channels: [process.env.TWITCH_CHANNEL || ''],
     });
     this.client.connect();
   }
@@ -76,7 +76,7 @@ export class Twitch {
     });
 
     this.client.on('redeem', async (channel, username, rewardType, tags) => {
-      if (tags['custom-reward-id'] === '7ecf18d3-390c-4079-ae7f-c114f7dc0cc9') {
+      if (tags['custom-reward-id'] === process.env.TWITCH_REDEMPTION_ID) {
         if (tags['user-id']) this.requests.push(tags['user-id']);
       }
     });
