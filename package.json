@@ -9,7 +9,7 @@
     "build": "tsc -p .",
     "start": "yarn build && node build/index.js",
     "start:prod": "node build/index.js",
-    "lint": "eslint . --ext .js, .ts"
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
