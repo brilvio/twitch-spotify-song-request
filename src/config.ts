@@ -1,14 +1,15 @@
 import * as fs from 'fs';
 
-export class Config {
-  private static instance: Config;
+export default class Config {
   private static readonly defaultPath = './config/config.json';
+
   private static readonly defaultConfig = {
     spotifyAccessToken: '',
     spotifyRefreshToken: '',
   };
 
   public spotifyAccessToken: string;
+
   public spotifyRefreshToken: string;
 
   constructor() {
@@ -19,7 +20,7 @@ export class Config {
 
   public read(path: string = Config.defaultPath): void {
     if (fs.existsSync(path)) {
-      let config = JSON.parse(fs.readFileSync(path).toString());
+      const config = JSON.parse(fs.readFileSync(path).toString());
       this.spotifyAccessToken = config.spotifyAccessToken;
       this.spotifyRefreshToken = config.spotifyRefreshToken;
     }
@@ -28,7 +29,10 @@ export class Config {
   public write(path: string = Config.defaultPath): void {
     fs.writeFileSync(
       path,
-      JSON.stringify({ spotifyAccessToken: this.spotifyAccessToken, spotifyRefreshToken: this.spotifyRefreshToken })
+      JSON.stringify({
+        spotifyAccessToken: this.spotifyAccessToken,
+        spotifyRefreshToken: this.spotifyRefreshToken,
+      }),
     );
   }
 }

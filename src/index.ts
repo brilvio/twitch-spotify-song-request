@@ -1,8 +1,8 @@
 import * as dotenv from 'dotenv';
 import express from 'express';
-import { Config } from './config';
-import { Spotify } from './spotify';
-import { Twitch } from './twitch';
+import Config from './config';
+import Spotify from './spotify';
+import Twitch from './twitch';
 
 dotenv.config();
 
@@ -33,5 +33,6 @@ const twitch = new Twitch(spotify);
 twitch.setup();
 
 app.listen(port, () => {
+  // eslint-disable-next-line no-console
   console.log(`Bot running on port ${port}`);
 });

@@ -1,9 +1,11 @@
 import tmi, { ChatUserstate } from 'tmi.js';
-import { Spotify } from './spotify';
+import Spotify from './spotify';
 
-export class Twitch {
+export default class Twitch {
   private requests: string[] = [];
+
   private spotify: Spotify;
+
   private client: tmi.Client;
 
   constructor(spotify: Spotify) {
@@ -20,28 +22,32 @@ export class Twitch {
     if (data && data.item) {
       this.client.say(
         channel,
-        `Now Playing: ${data.item.name} - ${(data.item as any).artists[0].name} - Album: ${
-          (data.item as any).album.name
-        }`
+        `Now Playing: ${data.item.name} - ${
+          // eslint-disable-next-line no-undef
+          (data.item as SpotifyApi.TrackObjectFull).artists[0].name
+        } - Album: ${
+          // eslint-disable-next-line no-undef
+          (data.item as SpotifyApi.TrackObjectFull).album.name
+        }`,
       );
     } else {
-      this.client.say(channel, `Sorry, I couldn't get the current song.`);
+      this.client.say(channel, "Sorry, I couldn't get the current song.");
     }
   }
 
   private async songRequest(channel: string, tags: ChatUserstate, message: string) {
     if (this.requests.filter((x) => x === tags['user-id']).length > 0) {
-      let music = message.replace('!sr ', '');
+      const music = message.replace('!sr ', '');
 
       if (music.startsWith('https://open.spotify.com/track/')) {
-        let id = music.split('/')[4].split('?')[0];
+        const id = music.split('/')[4].split('?')[0];
         const data = await this.spotify.getTrack(id);
 
         if (data) {
           await this.spotify.addTrackToQueue(`spotify:track:${id}`);
           this.client.say(
             channel,
-            `Add to the queue: ${data.name} - ${data.artists[0].name} - Album: ${data.album.name} requested by ${tags['display-name']}`
+            `Add to the queue: ${data.name} - ${data.artists[0].name} - Album: ${data.album.name} requested by ${tags['display-name']}`,
           );
           this.requests = this.requests.filter((x) => x !== tags['user-id']);
         } else {
@@ -55,7 +61,7 @@ export class Twitch {
           await this.spotify.addTrackToQueue(track.uri);
           this.client.say(
             channel,
-            `Add to the queue: ${track.name} - ${track.artists[0].name} - Album: ${track.album.name} requested by ${tags['display-name']}`
+            `Add to the queue: ${track.name} - ${track.artists[0].name} - Album: ${track.album.name} requested by ${tags['display-name']}`,
           );
           this.requests = this.requests.filter((x) => x !== tags['user-id']);
         } else {

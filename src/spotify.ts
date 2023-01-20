@@ -1,5 +1,5 @@
 import SpotifyWebApi from 'spotify-web-api-node';
-import { Config } from './config';
+import Config from './config';
 
 const scopes = [
   'user-read-playback-state',
@@ -9,8 +9,9 @@ const scopes = [
   'streaming',
 ];
 
-export class Spotify {
+export default class Spotify {
   private config: Config;
+
   private spotifyApi: SpotifyWebApi;
 
   constructor(config: Config) {
@@ -22,16 +23,16 @@ export class Spotify {
     });
   }
 
-  private async refreshToken(): Promise<Boolean> {
+  private async refreshToken(): Promise<boolean> {
     try {
       const data = await this.spotifyApi.refreshAccessToken();
-      this.spotifyApi.setAccessToken(data.body['access_token']);
-      this.config.spotifyAccessToken = data.body['access_token'];
+      this.spotifyApi.setAccessToken(data.body.access_token);
+      this.config.spotifyAccessToken = data.body.access_token;
       this.config.write();
-      setTimeout(this.refreshToken, data.body['expires_in'] * 1000 - 1000, this);
+      setTimeout(this.refreshToken, data.body.expires_in * 1000 - 1000, this);
       return true;
     } catch (err) {
-      console.log('Something went wrong! Refreshing token', err);
+      console.error('Something went wrong! Refreshing token', err);
       return false;
     }
   }
@@ -43,62 +44,65 @@ export class Spotify {
       this.refreshToken();
     } else {
       const authorizeURL = this.spotifyApi.createAuthorizeURL(scopes, '');
-      console.log(`Click in the link and authorize the app to call spotify ${authorizeURL}`);
+      console.info(`Click in the link and authorize the app to call spotify ${authorizeURL}`);
     }
   }
 
-  async autorize(code: string): Promise<Boolean> {
+  async autorize(code: string): Promise<boolean> {
     try {
       const data = await this.spotifyApi.authorizationCodeGrant(code);
-      this.spotifyApi.setAccessToken(data.body['access_token']);
-      this.spotifyApi.setRefreshToken(data.body['refresh_token']);
-      this.config.spotifyAccessToken = data.body['access_token'];
-      this.config.spotifyRefreshToken = data.body['refresh_token'];
-      setTimeout(this.refreshToken, data.body['expires_in'] * 1000 - 1000, this);
+      this.spotifyApi.setAccessToken(data.body.access_token);
+      this.spotifyApi.setRefreshToken(data.body.refresh_token);
+      this.config.spotifyAccessToken = data.body.access_token;
+      this.config.spotifyRefreshToken = data.body.refresh_token;
+      setTimeout(this.refreshToken, data.body.expires_in * 1000 - 1000, this);
       this.config.write();
       return true;
     } catch (err) {
-      console.log('Something went wrong! Authorizing with spotify', err);
+      console.error('Something went wrong! Authorizing with spotify', err);
       return false;
     }
   }
 
+  // eslint-disable-next-line no-undef
   async currentPlaying(): Promise<SpotifyApi.CurrentlyPlayingResponse | null> {
     try {
       const data = await this.spotifyApi.getMyCurrentPlayingTrack();
       return data.body;
     } catch (err) {
-      console.log('Something went wrong! Getting current playing track', err);
+      console.error('Something went wrong! Getting current playing track', err);
       return null;
     }
   }
 
+  // eslint-disable-next-line no-undef
   async getTrack(trackId: string): Promise<SpotifyApi.TrackObjectFull | null> {
     try {
       const data = await this.spotifyApi.getTrack(trackId);
       return data.body;
     } catch (err) {
-      console.log('Something went wrong! Getting track', err);
+      console.error('Something went wrong! Getting track', err);
       return null;
     }
   }
 
-  async addTrackToQueue(trackId: string): Promise<Boolean> {
+  async addTrackToQueue(trackId: string): Promise<boolean> {
     try {
       await this.spotifyApi.addToQueue(trackId);
       return true;
     } catch (err) {
-      console.log('Something went wrong! Adding track to queue', err);
+      console.error('Something went wrong! Adding track to queue', err);
       return false;
     }
   }
 
+  // eslint-disable-next-line no-undef
   async searchTracks(query: string): Promise<SpotifyApi.SearchResponse | null> {
     try {
       const data = await this.spotifyApi.searchTracks(query);
       return data.body;
     } catch (err) {
-      console.log('Something went wrong! Searching tracks', err);
+      console.error('Something went wrong! Searching tracks', err);
       return null;
     }
   }
