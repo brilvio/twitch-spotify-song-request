@@ -29,6 +29,6 @@ Viewers can use channel points to request songs, you have to setup a custom rewa
 ## Todo:
 
 * [ ] Add a command to skip the current song - only mods can use this command
-* [ ] Add Dockerfile and docker-compose.yml for easy deployment
+* [X] Add Dockerfile and docker-compose.yml for easy deployment
 * [ ] Add a static page to show the current song and the queue it will connect to the backend via socket.io and update in real time
 * [ ] Add automatic linting as an action on github

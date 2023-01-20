@@ -2,7 +2,7 @@ import * as fs from 'fs';
 
 export class Config {
   private static instance: Config;
-  private static readonly defaultPath = './config.json';
+  private static readonly defaultPath = './config/config.json';
   private static readonly defaultConfig = {
     spotifyAccessToken: '',
     spotifyRefreshToken: '',

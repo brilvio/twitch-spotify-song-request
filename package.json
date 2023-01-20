@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "npx nodemon",
     "build": "tsc -p .",
-    "start": "yarn build && node build/index.js"
+    "start": "yarn build && node build/index.js",
+    "start:prod": "node build/index.js"
   },
   "repository": {
     "type": "git",
